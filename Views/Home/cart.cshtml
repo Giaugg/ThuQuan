@@ -1,0 +1,181 @@
+@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+
+<h3>Giỏ hàng của bạn</h3>
+
+<div class="cart-container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Tên sản phẩm</th>
+                <th>Loại</th>
+                <th>Thời gian thuê</th>
+                <th>Phí thuê (VND)</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody id="cartItems">
+            <!-- Nội dung sẽ được render bằng JS -->
+        </tbody>
+    </table>
+
+    <div class="cart-summary">
+        <h4>Tổng cộng: <span id="total">0 VND</span></h4>
+        <button class="btn btn-success" onclick="checkout()">Xác nhận thuê</button>
+        <button class="btn btn-secondary" onclick="clearCart()">Xóa toàn bộ</button>
+    </div>
+</div>
+
+<style>
+    .cart-container {
+        max-width: 1000px;
+        margin: 20px auto;
+        color: #ffffff;
+    }
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #2b2b2b;
+    }
+    th {
+        background-color: #1a1a1a;
+        color: #ffffff;
+        padding: 12px;
+    }
+    td {
+        padding: 12px;
+        border-bottom: 1px solid #404040;
+        color: #d9d9d9;
+    }
+    .cart-summary {
+        margin-top: 20px;
+        text-align: right;
+        color: #ffffff;
+    }
+    .btn {
+        margin: 0 5px;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .btn-danger {
+        background-color: #404040;
+        color: #ffffff;
+    }
+    .btn-danger:hover {
+        background-color: #5c5c5c;
+    }
+    .btn-primary {
+        background-color: #4d4d4d;
+        color: #ffffff;
+    }
+    .btn-primary:hover {
+        background-color: #666666;
+    }
+    .btn-success {
+        background-color: #333333;
+        color: #ffffff;
+    }
+    .btn-success:hover {
+        background-color: #4d4d4d;
+    }
+    .btn-secondary {
+        background-color: #262626;
+        color: #d9d9d9;
+    }
+    .btn-secondary:hover {
+        background-color: #404040;
+    }
+    h3 {
+        color: #ffffff;
+    }
+</style>
+
+<script>
+    // Dữ liệu mẫu dạng mảng objects
+    const cartItems = [
+        {
+            id: 1,
+            name: "Laptop Dell XPS 13",
+            type: "Thiết bị điện tử",
+            duration: "7 ngày",
+            price: 350000
+        },
+        {
+            id: 2,
+            name: "Sách: Cấu trúc dữ liệu và giải thuật",
+            type: "Sách",
+            duration: "14 ngày",
+            price: 50000
+        },
+        {
+            id: 3,
+            name: "Máy tính Casio fx-580VN",
+            type: "Thiết bị điện tử",
+            duration: "3 ngày",
+            price: 30000
+        }
+    ];
+
+    // Hàm render giỏ hàng
+    function renderCart() {
+        const tbody = document.getElementById('cartItems');
+        tbody.innerHTML = '';
+        
+        cartItems.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${item.name}</td>
+                <td>${item.type}</td>
+                <td>${item.duration}</td>
+                <td>${item.price.toLocaleString()}</td>
+                <td>
+                    <button class="btn btn-danger btn-sm" onclick="removeItem(${item.id})">Xóa</button>
+                    <button class="btn btn-primary btn-sm" onclick="updateItem(${item.id})">Cập nhật</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        // Cập nhật tổng tiền
+        const total = cartItems.reduce((sum, item) => sum + item.price, 0);
+        document.getElementById('total').textContent = total.toLocaleString() + ' VND';
+    }
+
+    function removeItem(itemId) {
+        if (confirm('Bạn có chắc muốn xóa mục này khỏi giỏ hàng?')) {
+            const index = cartItems.findIndex(item => item.id === itemId);
+            if (index !== -1) {
+                cartItems.splice(index, 1);
+                renderCart();
+            }
+        }
+    }
+
+    function updateItem(itemId) {
+        alert('Cập nhật mục ' + itemId);
+        // Có thể thêm logic cập nhật duration/price tại đây
+    }
+
+    function checkout() {
+        if (cartItems.length === 0) {
+            alert('Giỏ hàng trống!');
+            return;
+        }
+        if (confirm('Xác nhận thuê các mục trong giỏ hàng?')) {
+            alert('Đã gửi yêu cầu thuê thành công!');
+        }
+    }
+
+    function clearCart() {
+        if (confirm('Bạn có muốn xóa toàn bộ giỏ hàng?')) {
+            cartItems.length = 0;
+            renderCart();
+        }
+    }
+
+    // Render giỏ hàng khi tải trang
+    window.onload = renderCart;
+</script>
